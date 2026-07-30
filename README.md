@@ -1,58 +1,372 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Online Store API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+RESTful API sederhana untuk sistem Online Store yang dibangun menggunakan **Laravel 13**.
 
-## About Laravel
+Project ini dibuat sebagai implementasi backend API dengan fitur utama:
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+* Product Management
+* Order Management
+* Inventory Management
+* Flash Sale / Race Condition Handling
+* Database Transaction
+* API Documentation menggunakan Postman
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+# Tech Stack
 
-## Learning Laravel
+* Laravel 13
+* PHP >= 8.4
+* MySQL
+* Eloquent ORM
+* REST API
+* Postman
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# Features
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Products
 
-## Agentic Development
+* Melihat seluruh produk
+* Melihat detail produk
+* Menambahkan produk baru
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Orders
+
+* Membuat pesanan
+* Melihat daftar pesanan
+* Melihat detail pesanan
+
+## Inventory
+
+* Pengurangan stok otomatis ketika order berhasil dibuat
+* Validasi stok
+* Pencegahan stok minus
+
+## Concurrency
+
+API menggunakan:
+
+* Database Transaction
+* Row Lock (`lockForUpdate()`)
+* Deadlock Prevention (sorting product_id)
+
+untuk memastikan stok tetap konsisten ketika banyak user melakukan pembelian secara bersamaan (Flash Sale).
+
+---
+
+# Requirements
+
+* PHP >= 8.4
+* Composer
+* MySQL
+* Git
+
+Disarankan menggunakan:
+
+* Laragon
+* MySQL 8+
+
+---
+
+# Installation
+
+Clone repository
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone <repository-url>
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Masuk ke folder project
 
-## Contributing
+```bash
+cd online-store-api
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Install dependency
 
-## Code of Conduct
+```bash
+composer install
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Copy file environment
 
-## Security Vulnerabilities
+```bash
+cp .env.example .env
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+atau pada Windows
 
-## License
+```bash
+copy .env.example .env
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Generate application key
+
+```bash
+php artisan key:generate
+```
+
+---
+
+# Database Configuration
+
+Edit file `.env`
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=online_store
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Buat database baru
+
+```sql
+CREATE DATABASE online_store;
+```
+
+---
+
+# Migration
+
+Jalankan migration
+
+```bash
+php artisan migrate
+```
+
+---
+
+# Seeder
+
+Generate dummy products
+
+```bash
+php artisan db:seed
+```
+
+atau
+
+```bash
+php artisan db:seed --class=ProductSeeder
+```
+
+---
+
+# Running Application
+
+Menggunakan Laravel
+
+```bash
+php artisan serve
+```
+
+atau menggunakan Laragon
+
+```
+http://online-store-api.test
+```
+
+---
+
+# API Documentation
+
+Dokumentasi API lengkap tersedia di:
+
+https://documenter.getpostman.com/view/21092059/2sBY4SNKdE
+
+Dokumentasi mencakup:
+
+* Endpoint
+* Request Body
+* Response
+* Error Response
+* Collection
+* Example Request
+* Example Response
+
+---
+
+# API Endpoints
+
+## Products
+
+### Get Products
+
+```
+GET /api/v1/products
+```
+
+### Get Product Detail
+
+```
+GET /api/v1/products/{id}
+```
+
+### Create Product
+
+```
+POST /api/v1/products
+```
+
+---
+
+## Orders
+
+### Get Orders
+
+```
+GET /api/v1/orders
+```
+
+### Get Order Detail
+
+```
+GET /api/v1/orders/{id}
+```
+
+### Create Order
+
+```
+POST /api/v1/orders
+```
+
+Contoh Request
+
+```json
+{
+    "items": [
+        {
+            "product_id": 1,
+            "quantity": 2
+        },
+        {
+            "product_id": 3,
+            "quantity": 1
+        }
+    ]
+}
+```
+
+---
+
+# Flash Sale Test
+
+Project ini menyediakan command untuk mensimulasikan ratusan user melakukan pembelian secara bersamaan.
+
+Jalankan
+
+```bash
+php artisan test:flash-sale
+```
+
+Command tersebut akan:
+
+* Mengirim ratusan request secara concurrent
+* Menguji race condition
+* Memastikan stok tidak menjadi negatif
+* Menampilkan jumlah request berhasil dan gagal
+
+Contoh output
+
+```
+Request Berhasil : 100
+Request Gagal    : 100
+Sisa Inventory   : 0
+```
+
+---
+
+# Reset Flash Sale
+
+Untuk menghapus seluruh order dan mengembalikan stok produk:
+
+```bash
+php artisan flash-sale:reset
+```
+
+---
+
+# Project Structure
+
+```
+app/
+ ├── Http/
+ │    └── Controllers/
+ │
+ ├── Models/
+ │
+ └── Console/
+      └── Commands/
+
+database/
+ ├── factories/
+ ├── migrations/
+ └── seeders/
+
+routes/
+ └── api.php
+```
+
+---
+
+# Business Rules
+
+## Product
+
+* Inventory tidak boleh negatif.
+* Harga produk disimpan sebagai harga satuan.
+
+## Order
+
+* Minimal memiliki satu item.
+* Quantity minimal 1.
+* Product harus tersedia.
+* Inventory akan dikurangi setelah order berhasil dibuat.
+* Total order merupakan jumlah seluruh subtotal item.
+
+---
+
+# Concurrency Strategy
+
+Untuk menghindari race condition ketika Flash Sale:
+
+* Menggunakan database transaction.
+* Menggunakan `SELECT ... FOR UPDATE` (`lockForUpdate()`).
+* Mengurutkan product berdasarkan ID untuk mengurangi potensi deadlock.
+* Seluruh proses checkout dilakukan dalam satu transaksi database.
+
+Dengan pendekatan tersebut, stok tetap konsisten walaupun terdapat banyak request yang berjalan secara bersamaan.
+
+---
+
+# Future Improvements
+
+Beberapa pengembangan yang dapat dilakukan:
+
+* Authentication (Laravel Sanctum/JWT)
+* Update Product
+* Delete Product
+* Update Order Status
+* Payment Gateway
+* Unit Test
+* Feature Test
+* Docker Support
+* Swagger / OpenAPI
+* CI/CD Pipeline
+* Redis Queue
+* Redis Cache
+* Pagination & Filtering
+* Product Search
+* Order Cancellation
+* Inventory History
+
+---
+
+# Author
+
+Developed by **Putra Nurhuda Makatita**
