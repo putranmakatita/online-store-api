@@ -4,6 +4,7 @@ use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use App\Console\Commands\TestRaceCondition;
 use App\Console\Commands\ResetFlashSale;
+use App\Console\Commands\HiddenItemGameCommand;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
@@ -17,3 +18,7 @@ Artisan::command('test:flash-sale', function () {
 Artisan::command('flash-sale:reset', function () {
     $this->call(ResetFlashSale::class);
 })->purpose('Reset condition sebelum flash sale');
+
+Artisan::command('game:hidden-item', function () {
+    $this->call(HiddenItemGameCommand::class);
+})->purpose('Bermain game di Command Line!');
